@@ -1,3 +1,48 @@
 {:paths ["src"]
  :deps {criterium/criterium {:mvn/version "0.4.5"}
-        techascent/tech.ml.dataset {:mvn/version "6.094"}}}
+
+        ;;Commented out because I don't always need to prepare a dataset of results
+        ;;and because I use this during development of dataset and dtype-next.
+
+        ;;techascent/tech.ml.dataset {:mvn/version "6.094"}
+        }
+ :aliases
+ {:build
+  {:deps {io.github.clojure/tools.build {:git/tag "v0.8.1" :git/sha "7d40500"}}
+   :ns-default build}
+  :codox
+  {:extra-deps {codox-theme-rdash/codox-theme-rdash {:mvn/version "0.1.2"}
+                nrepl/nrepl {:mvn/version "0.8.3"}
+                cider/cider-nrepl {:mvn/version "0.25.5"}
+                com.cnuernber/codox {:mvn/version "1.001"}}
+   :exec-fn codox.main/-main
+   :exec-args {:group-id "com.cnuernber"
+               :artifact-id "benchmark"
+               :version "1.000-beta-1"
+               :name "Benchmark"
+               :description "Simple benchmarking tools"
+               :metadata {:doc/format :markdown}
+               :html {:transforms [[:head] [:append [:script {:async true
+                                                              :src "https://www.googletagmanager.com/gtag/js?id=G-XJYNJF48RM"}]]
+                                   [:head] [:append [:script "window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-XJYNJF48RM');"]]]}
+               :themes [:rdash]
+               :source-paths ["src"]
+               :output-path "docs"
+               :doc-paths ["topics"]
+               :source-uri "https://github.com/cnuernber/benchmark/blob/master/{filepath}#L{line}"
+               :namespaces [benchmark.api benchmark.process-results]}}
+  :deploy
+  {:replace-deps {slipset/deps-deploy {:mvn/version "0.1.5"}}
+   :exec-fn deps-deploy.deps-deploy/deploy
+   :exec-args {:installer :remote
+               :sign-releases? true
+               :artifact "target/benchmark.jar"}}
+  :install
+  {:replace-deps {slipset/deps-deploy {:mvn/version "0.1.5"}}
+   :exec-fn deps-deploy.deps-deploy/deploy
+   :exec-args {:installer :local
+               :artifact "target/benchmark.jar"}}}}
